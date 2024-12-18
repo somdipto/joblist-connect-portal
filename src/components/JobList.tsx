@@ -1,50 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, MapPin, Timer } from "lucide-react";
-
-// Mock data - replace with real data when backend is integrated
-const mockJobs = [
-  {
-    id: 1,
-    title: "Senior Frontend Developer",
-    company: "Tech Corp",
-    location: "San Francisco, CA",
-    type: "Full-time",
-    salary: "$120k - $150k",
-    description: "We're looking for an experienced frontend developer to join our team...",
-    postedAt: "2 days ago",
-  },
-  {
-    id: 2,
-    title: "Product Designer",
-    company: "Design Studio",
-    location: "Remote",
-    type: "Contract",
-    salary: "$80k - $100k",
-    description: "Join our creative team as a product designer...",
-    postedAt: "1 week ago",
-  },
-  {
-    id: 3,
-    title: "Backend Engineer",
-    company: "StartupCo",
-    location: "New York, NY",
-    type: "Full-time",
-    salary: "$130k - $160k",
-    description: "Looking for a backend engineer to scale our infrastructure...",
-    postedAt: "3 days ago",
-  },
-];
+import { getJobListings, type JobListing } from "@/utils/jobStorage";
+import { formatDistanceToNow } from "date-fns";
 
 interface JobListProps {
   searchQuery: string;
 }
 
 export const JobList = ({ searchQuery }: JobListProps) => {
-  const filteredJobs = mockJobs.filter(
+  const jobs = getJobListings();
+  
+  const filteredJobs = jobs.filter(
     (job) =>
-      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -55,13 +25,13 @@ export const JobList = ({ searchQuery }: JobListProps) => {
           <CardHeader>
             <div className="flex justify-between items-start">
               <div>
-                <CardTitle className="text-xl">{job.title}</CardTitle>
+                <CardTitle className="text-xl">{job.jobTitle}</CardTitle>
                 <CardDescription className="flex items-center gap-2 mt-1">
                   <Building2 className="w-4 h-4" />
-                  {job.company}
+                  {job.companyName}
                 </CardDescription>
               </div>
-              <Badge variant="secondary">{job.type}</Badge>
+              <Badge variant="secondary">{job.employmentType}</Badge>
             </div>
           </CardHeader>
           <CardContent>
@@ -74,9 +44,9 @@ export const JobList = ({ searchQuery }: JobListProps) => {
                 </div>
                 <div className="flex items-center gap-1">
                   <Timer className="w-4 h-4" />
-                  {job.postedAt}
+                  {formatDistanceToNow(new Date(job.postedAt), { addSuffix: true })}
                 </div>
-                <div className="font-medium text-primary">{job.salary}</div>
+                <div className="font-medium text-primary">{job.salaryRange}</div>
               </div>
             </div>
           </CardContent>

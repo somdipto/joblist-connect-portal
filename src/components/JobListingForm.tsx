@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { saveJobListing } from "@/utils/jobStorage";
+import { useNavigate } from "react-router-dom";
 
 interface JobListing {
   companyName: string;
@@ -29,6 +31,7 @@ export const JobListingForm = () => {
   const [formData, setFormData] = useState<JobListing>(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -42,14 +45,15 @@ export const JobListingForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Here you would typically send the data to your backend
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated delay
+      saveJobListing(formData);
       toast({
         title: "Success!",
         description: "Your job listing has been created.",
         duration: 5000,
       });
       setFormData(initialState);
+      // Redirect to the jobs page after successful submission
+      navigate("/jobs");
     } catch (error) {
       toast({
         title: "Error",
